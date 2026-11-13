@@ -1,0 +1,20 @@
+name: Docker build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t sda-guide .
+      - name: Smoke test the container
+        run: |
+          docker run -d --name sda-guide -p 8080:80 sda-guide
+          sleep 5
+          curl -fsS http://localhost:8080/ | grep -q "Software Development Analytics"
